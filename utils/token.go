@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/base64"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -14,6 +15,7 @@ func CreateToken(ttl time.Duration, payload interface{}, privateKey string) (str
 		return "", fmt.Errorf("could not decode key: %w", err)
 	}
 	key, err := jwt.ParseRSAPrivateKeyFromPEM(decodedPrivateKey)
+	log.Printf("Private key: %+v", key.Public())
 
 	if err != nil {
 		return "", fmt.Errorf("create: parse key: %w", err)
@@ -33,6 +35,7 @@ func CreateToken(ttl time.Duration, payload interface{}, privateKey string) (str
 		return "", fmt.Errorf("create: sign token: %w", err)
 	}
 
+	log.Printf("Token: %+v", token)
 	return token, nil
 }
 
@@ -56,21 +59,32 @@ func GenerateToken(ttl time.Duration, payload interface{}, secretJWTKey string) 
 	return tokenString, nil
 }
 
-func ValidateToken(token string, signedJWTKey string) (interface{}, error) {
-	tok, err := jwt.Parse(token, func(jwtToken *jwt.Token) (interface{}, error) {
-		if _, ok := jwtToken.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected method: %s", jwtToken.Header["alg"])
-		}
-
-		return []byte(signedJWTKey), nil
-	})
+func ValidateToken(token string, publicKey string) (interface{}, error) {
+	decodedPublicKey, err := base64.StdEncoding.DecodeString(publicKey)
 	if err != nil {
-		return nil, fmt.Errorf("invalidate token: %w", err)
+		return nil, fmt.Errorf("could not decode: %w", err)
 	}
 
-	claims, ok := tok.Claims.(jwt.MapClaims)
-	if !ok || !tok.Valid {
-		return nil, fmt.Errorf("invalid token claim")
+	key, err := jwt.ParseRSAPublicKeyFromPEM(decodedPublicKey)
+
+	if err != nil {
+		return "", fmt.Errorf("validate: parse key: %w", err)
+	}
+
+	parsedToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected method: %s", t.Header["alg"])
+		}
+		return key, nil
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("validate: %w", err)
+	}
+
+	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+	if !ok || !parsedToken.Valid {
+		return nil, fmt.Errorf("validate: invalid token")
 	}
 
 	return claims["sub"], nil
