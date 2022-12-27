@@ -3,18 +3,22 @@ module github.com/phekno/gotter-user
 go 1.19
 
 require (
+	github.com/gin-contrib/cors v1.4.0
+	github.com/gin-gonic/gin v1.8.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
+	github.com/k3a/html2text v1.1.0
 	github.com/spf13/viper v1.12.0
-	github.com/phekno/gotter-user v0.0.0-20221002140051-01396cc5d5a0
+	github.com/thanhpk/randstr v1.0.4
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa
+	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
+	gorm.io/driver/postgres v1.3.8
+	gorm.io/gorm v1.23.8
 )
 
 require (
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
-	github.com/gin-contrib/cors v1.4.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.8.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.11.0 // indirect
@@ -49,9 +53,8 @@ require (
 	golang.org/x/sys v0.0.0-20220804214406-8e32c043e418 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/driver/postgres v1.3.8 // indirect
-	gorm.io/gorm v1.23.8 // indirect
 )
